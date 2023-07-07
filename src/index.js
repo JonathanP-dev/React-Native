@@ -1,13 +1,14 @@
 import { View, Text, TextInput, Button, SafeAreaView, FlatList, Modal, TouchableOpacity } from 'react-native';
 import { styles } from './styles';
 import { useState } from 'react';
+import { InputTask, TaskItem } from './components';
 
 export default function App () {
-  const [borderColor, setBorderColor] = useState( '#C5C9E7' )
-  const [task, setTask] = useState( '' )
   const [taskList, setTaskList] = useState( [] )
   const [isVisible, setIsVisible] = useState( false )
   const [selectedTask, setSelectedTask] = useState( null )
+  const [borderColor, setBorderColor] = useState( '#C5C9E7' )
+  const [task, setTask] = useState( '' )
 
   const onHandlerFocus = () => {
     setBorderColor( '#424D9E' )
@@ -45,31 +46,20 @@ export default function App () {
 
   const renderItem = ( { item } ) => {
     return (
-      <TouchableOpacity onPress={() => onHandlerModal( item )} style={styles.containerItem}>
-        <Text style={styles.itemList}>{item.value}</Text>
-        <Text style={styles.icon}>X</Text>
-      </TouchableOpacity>
+      <TaskItem item={item} onPressItem={onHandlerModal} />
     )
   }
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
-        <View style={styles.inputContainer}>
-          <TextInput
-            style={[styles.input, { borderColor: borderColor }]}
-            placeholder='add new task'
-            autoCapitalize='none'
-            autoCorrect={false}
-            cursorColor='#424D9E'
-            selectionColor='#D4D7ED'
-            placeholderTextColor='#C5C9E7'
-            onFocus={onHandlerFocus}
-            onBlur={onHandlerBlur}
-            value={task}
-            onChangeText={onHandlerChangeText}
-          />
-          <Button disabled={task.length === 0} title='Create' color='#424D9E' onPress={onHandlerCreateTask} />
-        </View>
+        <InputTask
+          borderColor={borderColor}
+          onHandlerBlur={onHandlerBlur}
+          onHandlerChangeText={onHandlerChangeText}
+          onHandlerCreateTask={onHandlerCreateTask}
+          onHandlerFocus={onHandlerFocus}
+          task={task}
+        />
         <FlatList
           style={styles.listContainer}
           contentContainerStyle={styles.list}

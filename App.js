@@ -1,60 +1,107 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, TextInput, View } from 'react-native';
+import { View, Text, TextInput, Button, SafeAreaView, FlatList, Modal, TouchableOpacity } from 'react-native';
+import { styles } from './styles';
+import { useState } from 'react';
 
 export default function App () {
+  const [borderColor, setBorderColor] = useState( '#C5C9E7' )
+  const [task, setTask] = useState( '' )
+  const [taskList, setTaskList] = useState( [] )
+  const [isVisible, setIsVisible] = useState( false )
+  const [selectedTask, setSelectedTask] = useState( null )
+
+  const onHandlerFocus = () => {
+    setBorderColor( '#424D9E' )
+  }
+
+  const onHandlerBlur = () => {
+    setBorderColor( '#C5C9E7' )
+  }
+
+  const onHandlerChangeText = ( text ) => {
+    setTask( text )
+  }
+
+  const onHandlerCreateTask = () => {
+    setTaskList( [
+      ...taskList,
+      {
+        id: Date.now().toString(),
+        value: task
+      }
+    ] )
+
+    setTask( '' )
+  }
+
+  const onHandlerModal = ( item ) => {
+    setIsVisible( !isVisible )
+    setSelectedTask( item )
+  }
+
+  const onHandlerDelete = ( id ) => {
+    setTaskList( prevs => prevs.filter( task => task.id !== id ) )
+    setIsVisible( !isVisible )
+  }
+
+  const renderItem = ( { item } ) => {
+    return (
+      <TouchableOpacity onPress={() => onHandlerModal( item )} style={styles.containerItem}>
+        <Text style={styles.itemList}>{item.value}</Text>
+        <Text style={styles.icon}>X</Text>
+      </TouchableOpacity>
+    )
+  }
   return (
-    <>
-      <StatusBar style="auto" />
-      <View style={styles.formContainer}>
-        <View style={styles.formInputs}>
-          <Text style={styles.text}>User: </Text><TextInput placeholder='Pepito' style={styles.input}></TextInput>
+    <SafeAreaView style={styles.safeArea}>
+      <View style={styles.container}>
+        <View style={styles.inputContainer}>
+          <TextInput
+            style={[styles.input, { borderColor: borderColor }]}
+            placeholder='add new task'
+            autoCapitalize='none'
+            autoCorrect={false}
+            cursorColor='#424D9E'
+            selectionColor='#D4D7ED'
+            placeholderTextColor='#C5C9E7'
+            onFocus={onHandlerFocus}
+            onBlur={onHandlerBlur}
+            value={task}
+            onChangeText={onHandlerChangeText}
+          />
+          <Button disabled={task.length === 0} title='Create' color='#424D9E' onPress={onHandlerCreateTask} />
         </View>
-        <View style={styles.formInputs}>
-          <Text style={styles.text}>Password: </Text><TextInput placeholder='Perez' style={styles.input}></TextInput>
-        </View>
+        <FlatList
+          style={styles.listContainer}
+          contentContainerStyle={styles.list}
+          data={taskList}
+          renderItem={renderItem}
+          alwaysBounceVertical={false}
+          keyExtractor={item => item.id}
+        />
       </View>
-      <View style={styles.container2}>
-        <Text style={{ textAlign: 'center', color: 'red' }}>Agregando cosas a mi celu</Text>
-      </View >
-    </>
+      <Modal
+        visible={isVisible} animationType='slide'
+      >
+        <View style={styles.modalContainer}>
+          <Text style={styles.modalTitle}>Task Detail</Text>
+          <View style={styles.modalDetailContainer}>
+            <Text style={styles.modalDetailMessage}>Are you sure to delete this item</Text>
+            <Text style={styles.selectedTask}>{selectedTask?.value}</Text>
+          </View>
+          <View style={styles.modalButtonContainer}>
+            <Button
+              title='Cancel'
+              color='#424d9e'
+              onPress={onHandlerModal}
+            />
+            <Button
+              title='Delete'
+              color='red'
+              onPress={() => onHandlerDelete( selectedTask?.id )}
+            />
+          </View>
+        </View>
+      </Modal>
+    </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create( {
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  container2: {
-    flex: 1,
-    backgroundColor: '#000',
-    alignItems: 'center',
-    justifyContent: 'center',
-    color: '#fff'
-  },
-  input: {
-    paddingLeft: 10,
-    width: 250,
-    borderWidth: 1,
-    borderStyle: 'solid',
-    borderColor: 'black'
-  },
-  formContainer: {
-    borderWidth: 1,
-    borderStyle: 'solid',
-    borderBottomColor: 'black',
-    flex: 1,
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
-    gap: 10
-  },
-  formInputs: {
-    width: 350,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between'
-  }
-} );

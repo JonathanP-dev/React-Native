@@ -1,2 +1,2 @@
-export { default as InputTask } from './inputTask/index';
-export { default as TaskItem } from './task/index';
+export { default as ExpenseInput } from './input/index';
+export { default as ExpenseItem } from './expense/index';

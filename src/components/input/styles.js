@@ -6,7 +6,7 @@ export const styles = StyleSheet.create( {
     justifyContent: 'space-between',
   },
   input: {
-    flex: 0.95,
+    flex: 1,
     borderWidth: 1,
     borderRadius: 10,
     paddingHorizontal: 10,

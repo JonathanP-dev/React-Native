@@ -1,14 +1,16 @@
 import { View, Text, TextInput, Button, SafeAreaView, FlatList, Modal, TouchableOpacity } from 'react-native';
 import { styles } from './styles';
 import { useState } from 'react';
-import { InputTask, TaskItem } from './components';
+import { ExpenseInput, ExpenseItem } from './components';
 
 export default function App () {
-  const [taskList, setTaskList] = useState( [] )
+  const [expenseList, setExpenseList] = useState( [] )
   const [isVisible, setIsVisible] = useState( false )
-  const [selectedTask, setSelectedTask] = useState( null )
+  const [selectedExpense, setSelectedExpense] = useState( null )
   const [borderColor, setBorderColor] = useState( '#C5C9E7' )
-  const [task, setTask] = useState( '' )
+  const [expenseCategory, setExpenseCategory] = useState( '' )
+  const [expensePrice, setExpensePrice] = useState( '' )
+  const [expenseDesc, setExpenseDesc] = useState( '' )
 
   const onHandlerFocus = () => {
     setBorderColor( '#424D9E' )
@@ -18,52 +20,80 @@ export default function App () {
     setBorderColor( '#C5C9E7' )
   }
 
-  const onHandlerChangeText = ( text ) => {
-    setTask( text )
+  const onHandlerChangeTextCategory = ( text ) => {
+    setExpenseCategory( text )
+  }
+  const onHandlerChangeTextPrice = ( text ) => {
+    setExpensePrice( text )
+  }
+  const onHandlerChangeTextDesc = ( text ) => {
+    setExpenseDesc( text )
   }
 
   const onHandlerCreateTask = () => {
-    setTaskList( [
-      ...taskList,
+    setExpenseList( [
+      ...expenseList,
       {
         id: Date.now().toString(),
-        value: task
+        category: expenseCategory,
+        price: expensePrice,
+        desc: expenseDesc
       }
     ] )
 
-    setTask( '' )
+    setExpenseCategory( '' )
+    setExpensePrice( '' )
+    setExpenseDesc( '' )
   }
 
   const onHandlerModal = ( item ) => {
     setIsVisible( !isVisible )
-    setSelectedTask( item )
+    setSelectedExpense
+      ( item )
   }
 
   const onHandlerDelete = ( id ) => {
-    setTaskList( prevs => prevs.filter( task => task.id !== id ) )
+    setExpenseList( prevs => prevs.filter( expense => expense.id !== id ) )
     setIsVisible( !isVisible )
   }
 
   const renderItem = ( { item } ) => {
     return (
-      <TaskItem item={item} onPressItem={onHandlerModal} />
+      <ExpenseItem item={item} onPressItem={onHandlerModal} />
     )
   }
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
-        <InputTask
+        <ExpenseInput
           borderColor={borderColor}
           onHandlerBlur={onHandlerBlur}
-          onHandlerChangeText={onHandlerChangeText}
-          onHandlerCreateTask={onHandlerCreateTask}
+          onHandlerChangeText={onHandlerChangeTextCategory}
           onHandlerFocus={onHandlerFocus}
-          task={task}
+          expense={expenseCategory}
+          placeholderText={'category'}
         />
+        <ExpenseInput
+          borderColor={borderColor}
+          onHandlerBlur={onHandlerBlur}
+          onHandlerChangeText={onHandlerChangeTextPrice}
+          onHandlerFocus={onHandlerFocus}
+          expense={expensePrice}
+          placeholderText={'price'}
+        />
+        <ExpenseInput
+          borderColor={borderColor}
+          onHandlerBlur={onHandlerBlur}
+          onHandlerChangeText={onHandlerChangeTextDesc}
+          onHandlerFocus={onHandlerFocus}
+          expense={expenseDesc}
+          placeholderText={'description'}
+        />
+        <Button disabled={expenseCategory.length === 0 || expensePrice.length === 0 || expenseDesc.length === 0} title='create expense' color='#424D9E' onPress={onHandlerCreateTask} />
         <FlatList
           style={styles.listContainer}
           contentContainerStyle={styles.list}
-          data={taskList}
+          data={expenseList}
           renderItem={renderItem}
           alwaysBounceVertical={false}
           keyExtractor={item => item.id}
@@ -73,10 +103,10 @@ export default function App () {
         visible={isVisible} animationType='slide'
       >
         <View style={styles.modalContainer}>
-          <Text style={styles.modalTitle}>Task Detail</Text>
+          <Text style={styles.modalTitle}>Expense detail</Text>
           <View style={styles.modalDetailContainer}>
             <Text style={styles.modalDetailMessage}>Are you sure to delete this item</Text>
-            <Text style={styles.selectedTask}>{selectedTask?.value}</Text>
+            <Text style={styles.selectedExpense}>{selectedExpense?.value}</Text>
           </View>
           <View style={styles.modalButtonContainer}>
             <Button
@@ -87,7 +117,7 @@ export default function App () {
             <Button
               title='Delete'
               color='red'
-              onPress={() => onHandlerDelete( selectedTask?.id )}
+              onPress={() => onHandlerDelete( selectedExpense?.id )}
             />
           </View>
         </View>

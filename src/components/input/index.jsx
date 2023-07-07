@@ -1,15 +1,14 @@
-import {View, TextInput, Button} from 'react-native'
+import {View, TextInput} from 'react-native'
 import { styles } from './styles';
 
-const InputTask = ({borderColor, onHandlerFocus,
-  onHandlerBlur, task,
-  onHandlerChangeText,
-  onHandlerCreateTask}) => {
+const InputTask = ({placeholderText, expense, borderColor, onHandlerFocus,
+  onHandlerBlur,
+  onHandlerChangeText}) => {
   return (
     <View style={styles.inputContainer}>
       <TextInput
         style={[styles.input, { borderColor: borderColor }]}
-        placeholder='add new task'
+        placeholder={placeholderText}
         autoCapitalize='none'
         autoCorrect={false}
         cursorColor='#424D9E'
@@ -17,10 +16,9 @@ const InputTask = ({borderColor, onHandlerFocus,
         placeholderTextColor='#C5C9E7'
         onFocus={onHandlerFocus}
         onBlur={onHandlerBlur}
-        value={task}
+        value={expense}
         onChangeText={onHandlerChangeText}
       />
-      <Button disabled={task.length === 0} title='Create' color='#424D9E' onPress={onHandlerCreateTask} />
     </View>
   )
 }

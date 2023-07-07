@@ -7,7 +7,8 @@ export const styles = StyleSheet.create( {
     flex: 1,
     backgroundColor: '#fff',
     marginHorizontal: 20,
-    paddingTop: StatusBar.currentHeight
+    paddingTop: StatusBar.currentHeight,
+    gap: 20
   },
   listContainer: {
     marginTop: 25
